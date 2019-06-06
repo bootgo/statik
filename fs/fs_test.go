@@ -160,7 +160,7 @@ func TestOpen(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.description, func(t *testing.T) {
-			Register(tc.zipData)
+			Register(DefaultKey, tc.zipData)
 			fs, err := New()
 			if err != nil {
 				t.Errorf("New() = %v", err)
@@ -209,7 +209,7 @@ func TestOpen(t *testing.T) {
 }
 
 func TestWalk(t *testing.T) {
-	Register(mustZipTree("../testdata/deep"))
+	Register(DefaultKey, mustZipTree("../testdata/deep"))
 	fs, err := New()
 	if err != nil {
 		t.Errorf("New() = %v", err)
@@ -241,7 +241,7 @@ func TestWalk(t *testing.T) {
 }
 
 func TestHTTPFile_Readdir(t *testing.T) {
-	Register(mustZipTree("../testdata/readdir"))
+	Register(DefaultKey, mustZipTree("../testdata/readdir"))
 	fs, err := New()
 	if err != nil {
 		t.Errorf("New() = %v", err)
@@ -324,7 +324,7 @@ func TestHTTPFile_Readdir(t *testing.T) {
 // to return the expected result.
 func TestOpen_Parallel(t *testing.T) {
 	indexHTMLData := mustReadFile("../testdata/index/index.html")
-	Register(mustZipTree("../testdata/index"))
+	Register(DefaultKey, mustZipTree("../testdata/index"))
 	fs, err := New()
 	if err != nil {
 		t.Fatalf("New() = %v", err)
@@ -354,7 +354,7 @@ func TestOpen_Parallel(t *testing.T) {
 }
 
 func BenchmarkOpen(b *testing.B) {
-	Register(mustZipTree("../testdata/index"))
+	Register(DefaultKey, mustZipTree("../testdata/index"))
 	fs, err := New()
 	if err != nil {
 		b.Fatalf("New() = %v", err)

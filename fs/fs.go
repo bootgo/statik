@@ -30,7 +30,9 @@ import (
 	"time"
 )
 
-var zipData string
+const DefaultKey = "default"
+
+var zipData = make(map[string]string)
 
 // file holds unzipped read-only file contents and file metadata.
 type file struct {
@@ -46,17 +48,21 @@ type statikFS struct {
 
 // Register registers zip contents data, later used to initialize
 // the statik file system.
-func Register(data string) {
-	zipData = data
+func Register(key string, data string) {
+	zipData[key] = data
 }
 
 // New creates a new file system with the registered zip contents data.
 // It unzips all files and stores them in an in-memory map.
 func New() (http.FileSystem, error) {
-	if zipData == "" {
+	return NewWithKey(DefaultKey)
+}
+
+func NewWithKey(key string) (http.FileSystem, error) {
+	if len(zipData) == 0 {
 		return nil, errors.New("statik/fs: no zip data registered")
 	}
-	zipReader, err := zip.NewReader(strings.NewReader(zipData), int64(len(zipData)))
+	zipReader, err := zip.NewReader(strings.NewReader(zipData[key]), int64(len(zipData[key])))
 	if err != nil {
 		return nil, err
 	}

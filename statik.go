@@ -45,6 +45,7 @@ var (
 	flagTags       = flag.String("tags", "", "Write build constraint tags")
 	flagPkg        = flag.String("p", "statik", "Name of the generated package")
 	flagPkgCmt     = flag.String("c", "Package statik contains static assets.", "The package comment. An empty value disables this comment.\n")
+	flagKey        = flag.String("k", "default", "Specify the assets's key name, so that you can contain multiple assets set with a key name")
 )
 
 // mtimeDate holds the arbitrary mtime that we assign to files when
@@ -203,10 +204,10 @@ import (
 func init() {
 	data := "`, tags, comment, namePackage)
 	FprintZipData(&qb, buffer.Bytes())
-	fmt.Fprint(&qb, `"
-	fs.Register(data)
+	_, _ = fmt.Fprintf(&qb, `"
+	fs.Register("%s", data)
 }
-`)
+`, *flagKey)
 
 	if err = ioutil.WriteFile(f.Name(), qb.Bytes(), 0644); err != nil {
 		return
